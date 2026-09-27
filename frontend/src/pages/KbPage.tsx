@@ -72,7 +72,7 @@ export default function KbPage() {
           <option value="ops_knowledge">运维技术知识</option>
           <option value="enterprise_background">企业项目背景</option>
         </select>
-        <input type="file" ref={fileRef} accept=".md,.txt,.pdf,.docx" style={{ width: 320 }} />
+        <input type="file" ref={fileRef} accept=".md,.txt" style={{ width: 320 }} />
         <button onClick={upload}>上传文档</button>
       </div>
 
