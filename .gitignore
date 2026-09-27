@@ -29,3 +29,7 @@ data/
 .idea/
 .DS_Store
 Thumbs.db
+
+# TS build cache
+tsconfig.tsbuildinfo
+*.tsbuildinfo
