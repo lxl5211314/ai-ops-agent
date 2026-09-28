@@ -44,7 +44,32 @@ async def chat_stream(
     async def gen():
         parts: list[str] = []
         sources: list[dict] = []
-        finished = False
+        persisted = False
+
+        def persist() -> None:
+            nonlocal persisted
+            if persisted or not parts:
+                return
+            db = SessionLocal()
+            try:
+                db.add(
+                    Message(
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content="".join(parts),
+                        meta={"sources": sources} if sources else None,
+                    )
+                )
+                conv = db.get(Conversation, conversation_id)
+                if conv is not None:
+                    from datetime import datetime
+
+                    conv.updated_at = datetime.utcnow()
+                db.commit()
+            finally:
+                db.close()
+            persisted = True
+
         try:
             async for ev in stream_reply(llm, user_text, history, rag_store=rag):
                 if ev["event"] == "delta":
@@ -54,29 +79,11 @@ async def chat_stream(
                 if ev["event"] == "error":
                     yield sse_event("error", ev["data"])
                     return
-                yield sse_event(ev["event"], ev["data"])
                 if ev["event"] == "done":
-                    finished = True
+                    persist()
+                yield sse_event(ev["event"], ev["data"])
         finally:
-            if finished and parts:
-                db = SessionLocal()
-                try:
-                    db.add(
-                        Message(
-                            conversation_id=conversation_id,
-                            role="assistant",
-                            content="".join(parts),
-                            meta={"sources": sources} if sources else None,
-                        )
-                    )
-                    conv = db.get(Conversation, conversation_id)
-                    if conv is not None:
-                        from datetime import datetime
-
-                        conv.updated_at = datetime.utcnow()
-                    db.commit()
-                finally:
-                    db.close()
+            persist()
 
     return StreamingResponse(
         merge_stream(gen(), heartbeat()),

@@ -145,6 +145,14 @@ alembic downgrade base     # 回滚
 
 启动后打开前端，顶部导航有四个页面：**对话问答 / 知识库 / 项目源码 / Bug 分析**。
 
+| 对话问答 | 知识库 |
+|:---:|:---:|
+| ![对话问答](docs/screenshots/01-chat.png) | ![知识库](docs/screenshots/02-kb.png) |
+
+| 项目源码 | Bug 分析 |
+|:---:|:---:|
+| ![项目源码](docs/screenshots/03-projects.png) | ![Bug 分析](docs/screenshots/04-analysis.png) |
+
 ### 5.1 对话问答（/chat）
 
 1. 点左上角 **「+ 新建会话」**。
