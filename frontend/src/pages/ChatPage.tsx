@@ -99,7 +99,7 @@ export default function ChatPage() {
             if (event === "done") last.streaming = false;
             if (event === "error") {
               last.streaming = false;
-              last.content = last.content || `⚠ ${data.message}`;
+              last.content = last.content || `⚠ ${data.message || "生成失败"}`;
             }
             next[next.length - 1] = last;
             return next;
@@ -113,11 +113,27 @@ export default function ChatPage() {
         onError: (msg) => {
           setError(msg);
           setBusy(false);
+          closeRef.current?.();
+          setMessages((prev) => {
+            const next = [...prev];
+            const last = next[next.length - 1];
+            if (last && last.role === "assistant" && last.streaming) {
+              next[next.length - 1] = {
+                ...last,
+                streaming: false,
+                content: last.content || `⚠ ${msg}`,
+              };
+            }
+            return next;
+          });
         },
       });
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "发送失败");
       setBusy(false);
+      setMessages((prev) =>
+        prev.filter((m) => !(m.role === "assistant" && m.streaming && !m.content)),
+      );
     }
   };
 
