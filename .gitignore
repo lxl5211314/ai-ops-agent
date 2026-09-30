@@ -21,6 +21,7 @@ npm-debug.log*
 .env
 .env.local
 data/
+logs/
 *.tmp
 *.swp
 

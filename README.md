@@ -129,6 +129,18 @@ docker compose up -d mysql etcd minio milvus neo4j
 
 > 本地模式下打开 **http://localhost:5173**；Docker 全栈模式打开 **http://localhost:8080**。
 
+### 方式 C：一键启停脚本（Windows，推荐日常使用）
+
+```bat
+service.bat start        :: 启动 基础设施 + 后端(:8000) + 前端(:5173)，并等待健康检查
+service.bat stop         :: 停止 后端 + 前端（Docker 容器保留，数据不丢）
+service.bat stop all     :: 停止 后端 + 前端 + 基础设施容器
+service.bat restart      :: 重启 后端 + 前端
+service.bat status       :: 查看容器和端口状态
+```
+
+日志写入 `logs/backend.log`、`logs/frontend.log`（已 gitignore）。脚本会自动跳过已启动的组件，重复执行安全。
+
 ### 数据库迁移
 
 `AUTO_CREATE_TABLES=true`（默认）会在启动时自动建表。使用 Alembic 的话：
