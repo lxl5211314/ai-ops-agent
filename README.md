@@ -132,11 +132,8 @@ docker compose up -d mysql etcd minio milvus neo4j
 ### 方式 C：一键启停脚本（Windows，推荐日常使用）
 
 ```bat
-service.bat start        :: 启动 基础设施 + 后端(:8000) + 前端(:5173)，并等待健康检查
-service.bat stop         :: 停止 后端 + 前端（Docker 容器保留，数据不丢）
-service.bat stop all     :: 停止 后端 + 前端 + 基础设施容器
-service.bat restart      :: 重启 后端 + 前端
-service.bat status       :: 查看容器和端口状态
+start.bat     :: 启动：基础设施容器 + 后端(:8000) + 前端(:5173)，并等待健康检查
+stop.bat      :: 停止：后端 + 前端 + 基础设施容器（数据保留在数据卷中）
 ```
 
 日志写入 `logs/backend.log`、`logs/frontend.log`（已 gitignore）。脚本会自动跳过已启动的组件，重复执行安全。
